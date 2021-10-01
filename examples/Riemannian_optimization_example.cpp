@@ -122,7 +122,7 @@ int main() {
   tnt_params.verbose = true;
 
   TNTResult<Vector, Scalar> tnt_result = TNT<Vector, Vector, Scalar, Vector>(
-      F, grad_F, HC, metric, retract, X0, P, std::experimental::nullopt,
+      F, grad_F, HC, metric, retract, X0, P, {},
       tnt_params);
 
   cout << "Truncated-Newton trust-region estimate x_final:  " << endl
@@ -131,4 +131,5 @@ int main() {
   cout << "Distance between P and x_final: " << (P - tnt_result.x).norm()
        << endl
        << endl;
+  return 0;
 }

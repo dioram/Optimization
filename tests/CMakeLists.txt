@@ -21,11 +21,15 @@ find_package(BLAS REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR} ${UMFPACK_INCLUDES})
 
 # Get GoogleTest
+find_package(GTest QUIET)
+if ((NOT ${gtest_FOUND}) OR (NOT TARGET GTest::gtest))
 include(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/googletest.cmake)
 fetch_googletest(
     ${CMAKE_CURRENT_SOURCE_DIR}/../cmake
     ${PROJECT_BINARY_DIR}/googletest
     )
+endif()
+set(GTest_LIBRARIES GTest::gtest GTest::gtest_main)
 
 # Add GTest unit tests
 enable_testing()
@@ -41,19 +45,22 @@ set(TEST_SRCS
 # INDIVIDUAL UNIT TESTS
 
 add_executable(IterativeSolvers_unit_test ${CMAKE_CURRENT_SOURCE_DIR}/IterativeSolvers_unit_test.cpp)
-target_link_libraries(IterativeSolvers_unit_test Optimization ${UMFPACK_LIBRARIES} gtest_main)
+target_link_libraries(IterativeSolvers_unit_test Optimization ${UMFPACK_LIBRARIES} ${GTest_LIBRARIES})
+add_test(NAME IterativeSolvers_unit_test COMMAND IterativeSolvers_unit_test)
 
 add_executable(TNT_unit_test ${CMAKE_CURRENT_SOURCE_DIR}/TNT_unit_test.cpp)
-target_link_libraries(TNT_unit_test Optimization gtest_main)
+target_link_libraries(TNT_unit_test Optimization ${GTest_LIBRARIES})
+add_test(NAME TNT_unit_test COMMAND TNT_unit_test)
 
 add_executable(TNLS_unit_test ${CMAKE_CURRENT_SOURCE_DIR}/TNLS_unit_test.cpp)
-target_link_libraries(TNLS_unit_test Optimization gtest_main)
+target_link_libraries(TNLS_unit_test Optimization ${GTest_LIBRARIES})
+add_test(NAME TNLS_unit_test COMMAND TNLS_unit_test)
 
 add_executable(GradientDescent_unit_test ${CMAKE_CURRENT_SOURCE_DIR}/GradientDescent_unit_test.cpp)
-target_link_libraries(GradientDescent_unit_test Optimization gtest_main)
+target_link_libraries(GradientDescent_unit_test Optimization ${GTest_LIBRARIES})
+add_test(NAME GradientDescent_unit_test COMMAND GradientDescent_unit_test)
 
 # RUN ALL UNIT TESTS
 add_executable(RunAllUnitTests ${TEST_SRCS})
-target_link_libraries(RunAllUnitTests Optimization ${UMFPACK_LIBRARIES} gtest_main)
-
-
+target_link_libraries(RunAllUnitTests Optimization ${UMFPACK_LIBRARIES} ${GTest_LIBRARIES})
+#add_test(NAME RunAllUnitTests COMMAND RunAllUnitTests)

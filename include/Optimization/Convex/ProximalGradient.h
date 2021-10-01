@@ -13,8 +13,9 @@
 #pragma once
 
 #include <algorithm>
+#define _USE_MATH_DEFINES
 #include <cmath>
-#include <experimental/optional>
+#include <optional>
 #include <functional>
 #include <iostream>
 #include <limits>
@@ -156,9 +157,9 @@ ProximalGradient(const Objective<Variable, Scalar, Args...> &f,
                  const Variable &x0, Args &... args,
                  const ProximalGradientParams<Scalar> &params =
                      ProximalGradientParams<Scalar>(),
-                 const std::experimental::optional<
+                 const std::optional<
                      ProximalGradientUserFunction<Variable, Scalar, Args...>>
-                     &user_function = std::experimental::nullopt) {
+                     &user_function = {}) {
 
   /// Declare some useful variables
 

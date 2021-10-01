@@ -19,7 +19,7 @@
 
 #include <algorithm>
 #include <cmath>
-#include <experimental/optional>
+#include <optional>
 #include <functional>
 #include <iostream>
 #include <limits>
@@ -249,13 +249,13 @@ TNT(const Objective<Variable, Scalar, Args...> &f,
     const RiemannianMetric<Variable, Tangent, Scalar, Args...> &metric,
     const Retraction<Variable, Tangent, Args...> &retract, const Variable &x0,
     Args &... args,
-    const std::experimental::optional<
+    const std::optional<
         LinearOperator<Variable, Tangent, Args...>> &precon =
-        std::experimental::nullopt,
+        {},
     const TNTParams<Scalar> &params = TNTParams<Scalar>(),
-    const std::experimental::optional<
+    const std::optional<
         TNTUserFunction<Variable, Tangent, Scalar, Args...>> &user_function =
-        std::experimental::nullopt) {
+        {}) {
 
   /// Argument checking
 
@@ -411,13 +411,13 @@ TNT(const Objective<Variable, Scalar, Args...> &f,
                                               MultiplierType());
   };
 
-  std::experimental::optional<Optimization::LinearAlgebra::STPCGPreconditioner<
+  std::optional<Optimization::LinearAlgebra::STPCGPreconditioner<
       Tangent, MultiplierType, Args...>>
   Pop(precon ? P
-             : std::experimental::optional<
+             : std::optional<
                    Optimization::LinearAlgebra::STPCGPreconditioner<
                        Tangent, MultiplierType, Args...>>(
-                   std::experimental::nullopt));
+                   {}));
 
   // Initialize trust-region radius
   Delta = params.Delta0;
@@ -695,13 +695,13 @@ TNT(const Objective<Variable, Scalar, Args...> &f,
     const RiemannianMetric<Variable, Tangent, Scalar, Args...> &metric,
     const Retraction<Variable, Tangent, Args...> &retract, const Variable &x0,
     Args &... args,
-    const std::experimental::optional<
+    const std::optional<
         LinearOperator<Variable, Tangent, Args...>> &precon =
-        std::experimental::nullopt,
+        {},
     const TNTParams<Scalar> &params = TNTParams<Scalar>(),
-    const std::experimental::optional<
+    const std::optional<
         TNTUserFunction<Variable, Tangent, Scalar, Args...>> &user_function =
-        std::experimental::nullopt) {
+        {}) {
 
   // Construct a QuadraticModel function from the passed VectorField and
   // HessianConstructor functions
@@ -745,17 +745,19 @@ TNTResult<Vector, Scalar> EuclideanTNT(
     const Objective<Vector, Scalar, Args...> &f,
     const EuclideanQuadraticModel<Vector, Args...> &QM, const Vector &x0,
     Args &... args,
-    const std::experimental::optional<EuclideanLinearOperator<Vector, Args...>>
-        &precon = std::experimental::nullopt,
+    const std::optional<EuclideanLinearOperator<Vector, Args...>>
+        &precon = {},
     const TNTParams<Scalar> &params = TNTParams<Scalar>(),
-    const std::experimental::optional<
+    const std::optional<
         EuclideanTNTUserFunction<Vector, Scalar, Args...>> &user_function =
-        std::experimental::nullopt) {
+        {}) {
 
   /// Run TNT algorithm using these Euclidean operators
   return TNT<Vector, Vector, Scalar, Args...>(
-      f, QM, EuclideanMetric<Vector, Scalar, Args...>,
-      EuclideanRetraction<Vector, Args...>, x0, args..., precon, params,
+      f, QM, 
+      { EuclideanMetric<Vector, Scalar, Args...> },
+      { EuclideanRetraction<Vector, Args...> },
+      x0, args..., precon, params,
       user_function);
 }
 
@@ -769,12 +771,12 @@ TNTResult<Vector, Scalar> EuclideanTNT(
     const EuclideanLinearOperatorConstructor<Vector, Args...>
         &HessianConstructor,
     const Vector &x0, Args &... args,
-    const std::experimental::optional<EuclideanLinearOperator<Vector, Args...>>
-        &precon = std::experimental::nullopt,
+    const std::optional<EuclideanLinearOperator<Vector, Args...>>
+        &precon = {},
     const TNTParams<Scalar> &params = TNTParams<Scalar>(),
-    const std::experimental::optional<
+    const std::optional<
         EuclideanTNTUserFunction<Vector, Scalar, Args...>> &user_function =
-        std::experimental::nullopt) {
+        {}) {
 
   EuclideanQuadraticModel<Vector, Args...> QM =
       [&nabla_f, &HessianConstructor](

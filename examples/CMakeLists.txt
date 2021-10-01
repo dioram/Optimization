@@ -23,15 +23,12 @@ endif()
 
 # Enable OpenMP (if available)
 set(ENABLE_OPENMP ON CACHE BOOL "Enable OpenMP (if available)")
-
 if(${ENABLE_OPENMP})
 find_package(OpenMP)
 	if(OPENMP_FOUND)
 	message(STATUS "Found OpenMP! Turning on support for parallelization\n")
-
 	# Append OpenMP compilation and linker flags to all executables
 	SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-	SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -fopenmp")
 	endif()
 endif()
 
@@ -39,22 +36,16 @@ endif()
 
 # Build a minimal working example to demonstrate truncated-Newton trust-region optimization over the sphere S2
 add_executable(Riemannian_optimization_example ${CMAKE_CURRENT_SOURCE_DIR}/Riemannian_optimization_example.cpp)
-target_link_libraries(Riemannian_optimization_example Optimization)
+target_link_libraries(Riemannian_optimization_example Optimization ${OpenMP_CXX_LIBRARIES})
 
 # Build a minimal working example to demonstrate the use of the simplified Euclidean truncated-Newton trust-region interface to minimize the McCormick function
 add_executable(Euclidean_optimization_example ${CMAKE_CURRENT_SOURCE_DIR}/Euclidean_optimization_example.cpp)
-target_link_libraries(Euclidean_optimization_example Optimization)
+target_link_libraries(Euclidean_optimization_example Optimization ${OpenMP_CXX_LIBRARIES})
 
 # Build a minimal working example to demonstrate the proximal gradient method on a group-sparse LASSO problem
 add_executable(proximal_gradient_example ${CMAKE_CURRENT_SOURCE_DIR}/proximal_gradient_example.cpp)
-target_link_libraries(proximal_gradient_example Optimization)
+target_link_libraries(proximal_gradient_example Optimization ${OpenMP_CXX_LIBRARIES})
 
 # Build a minimal working example to demonstrate the use of the ADMM algorithm
 add_executable(ADMM_example ${CMAKE_CURRENT_SOURCE_DIR}/ADMM_example.cpp)
-target_link_libraries(ADMM_example Optimization)
-
-
-
-
-
-
+target_link_libraries(ADMM_example Optimization ${OpenMP_CXX_LIBRARIES})

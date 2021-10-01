@@ -6,6 +6,15 @@
 
 #include <gtest/gtest.h>
 
+#define _USE_MATH_DEFINES // for C++
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI (3.14159265358979323846)
+#define M_PI_2 M_PI / 2.0
+#define M_PI_4 M_PI / 4.0
+#endif
+
 #include "Optimization/Riemannian/TNLS.h"
 
 class TNLSUnitTest : public testing::Test {
@@ -161,7 +170,7 @@ TEST_F(TNLSUnitTest, RootFinding) {
   Optimization::Riemannian::TNLSResult<Vector> result =
       Optimization::Riemannian::EuclideanTNLS<Vector>(
           F, JacFunc, beta0,
-          std::experimental::optional<
+          std::optional<
               Optimization::Riemannian::TNLSPreconditioner<Vector, Vector>>(),
           params);
 
@@ -192,7 +201,7 @@ TEST_F(TNLSUnitTest, LeastSquaresParameterFitting) {
   Optimization::Riemannian::TNLSResult<Vector> result =
       Optimization::Riemannian::EuclideanTNLS<Vector>(
           F, JacFunc, beta0,
-          std::experimental::optional<
+          std::optional<
               Optimization::Riemannian::TNLSPreconditioner<Vector, Vector>>(),
           params);
 
@@ -248,7 +257,7 @@ TEST_F(TNLSUnitTest, LeastSquaresParameterFittingWithPreconditioning) {
   Optimization::Riemannian::TNLSResult<Vector> result =
       Optimization::Riemannian::EuclideanTNLS<Vector>(
           F, JacFunc, beta0,
-          std::experimental::optional<
+          std::optional<
               Optimization::Riemannian::TNLSPreconditioner<Vector, Vector>>(
               precon),
           params);

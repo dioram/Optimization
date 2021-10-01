@@ -89,4 +89,5 @@ int main() {
   cout << "Final result:" << endl;
   cout << "F(x) = " << result.f << endl;
   cout << "x = " << endl << result.x << endl << endl;
+  return 0;
 }

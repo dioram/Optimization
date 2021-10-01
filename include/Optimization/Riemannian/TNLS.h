@@ -34,8 +34,7 @@
 #pragma once
 
 #include <algorithm>
-#include <cmath>
-#include <experimental/optional>
+#include <optional>
 #include <functional>
 #include <iostream>
 #include <limits>
@@ -266,19 +265,19 @@ template <typename VariableX, typename TangentX, typename VectorY,
           typename Scalar = double, typename... Args>
 TNLSResult<VariableX, Scalar>
 TNLS(const Mapping<VariableX, VectorY, Args...> &F,
-     const JacobianPairFunction<VariableX, TangentX, VectorY> &J,
+     const JacobianPairFunction<VariableX, TangentX, VectorY, Args...> &J,
      const RiemannianMetric<VariableX, TangentX, Scalar, Args...> &metric_X,
      const LinearAlgebra::InnerProduct<VectorY, Scalar, Args...>
          &inner_product_Y,
      const Retraction<VariableX, TangentX, Args...> &retract_X,
      const VariableX &x0, Args &... args,
-     const std::experimental::optional<
+     const std::optional<
          TNLSPreconditioner<VariableX, TangentX, Args...>> &precon =
-         std::experimental::nullopt,
+         {},
      const TNLSParams<Scalar> &params = TNLSParams<Scalar>(),
-     const std::experimental::optional<
+     const std::optional<
          TNLSUserFunction<VariableX, TangentX, VectorY, Scalar, Args...>>
-         &user_function = std::experimental::nullopt) {
+         &user_function = {}) {
 
   /// Argument checking
 
@@ -748,21 +747,23 @@ TNLS(const Mapping<VariableX, VectorY, Args...> &F,
 template <typename Vector, typename Scalar = double, typename... Args>
 TNLSResult<Vector, Scalar>
 EuclideanTNLS(const Mapping<Vector, Vector, Args...> &F,
-              const JacobianPairFunction<Vector, Vector, Vector> &J,
+              const JacobianPairFunction<Vector, Vector, Vector, Args...> &J,
               const Vector &x0, Args &... args,
-              const std::experimental::optional<
+              const std::optional<
                   TNLSPreconditioner<Vector, Vector, Args...>> &precon =
-                  std::experimental::nullopt,
+                  {},
               const TNLSParams<Scalar> &params = TNLSParams<Scalar>(),
-              const std::experimental::optional<
+              const std::optional<
                   TNLSUserFunction<Vector, Vector, Vector, Scalar, Args...>>
-                  &user_function = std::experimental::nullopt) {
+                  &user_function = {}) {
 
   /// Run TNLS algorithm using these Euclidean operators
   return TNLS<Vector, Vector, Vector, Scalar, Args...>(
-      F, J, EuclideanMetric<Vector, Scalar, Args...>,
-      EuclideanInnerProduct<Vector, Scalar, Args...>,
-      EuclideanRetraction<Vector, Args...>, x0, args..., precon, params,
+      F, J, 
+      { EuclideanMetric<Vector, Scalar, Args...> },
+      { EuclideanInnerProduct<Vector, Scalar, Args...> },
+      { EuclideanRetraction<Vector, Args...> },
+      x0, args..., precon, params,
       user_function);
 }
 

@@ -16,7 +16,7 @@ find_path(UMFPACK_INCLUDES
   ufsparse
 )
 
-find_library(UMFPACK_LIBRARIES umfpack PATHS $ENV{UMFPACKDIR} ${LIB_INSTALL_DIR})
+find_library(UMFPACK_LIBRARIES umfpack NAMES libumfpack PATHS $ENV{UMFPACKDIR} ${LIB_INSTALL_DIR})
 
 if(UMFPACK_LIBRARIES)
 

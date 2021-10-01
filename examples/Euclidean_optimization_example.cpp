@@ -45,7 +45,7 @@ int main() {
   // Euclidean Hessian constructor: Returns the Hessian operator H(X) at X
   // H(X) = [2 - 4by + 12bx^2   -4bx
   //      -4bx               2b]
-  EuclideanLinearOperatorConstructor<Vector> HC = [a, b](const Vector &x) {
+  EuclideanLinearOperatorConstructor<Vector> HC = [b](const Vector &x) {
     // Compute Euclidean Hessian at X
     Matrix H;
     H(0, 0) = 2 - 4 * b * x(1) + 12 * b * std::pow(x(0), 2);
@@ -98,7 +98,7 @@ int main() {
   tnt_params.verbose = true;
 
   TNTResult<Vector, Scalar> tnt_result = EuclideanTNT<Vector, Scalar>(
-      F, nabla_F, HC, x0, std::experimental::nullopt, tnt_params);
+      F, nabla_F, HC, x0, {}, tnt_params);
 
   cout << "Final objective value (should be 0): = " << tnt_result.f << endl
        << endl;
@@ -108,4 +108,5 @@ int main() {
   cout << "Error in minimizer estimate: " << (tnt_result.x - x_min).norm()
        << endl
        << endl;
+  return 0;
 }

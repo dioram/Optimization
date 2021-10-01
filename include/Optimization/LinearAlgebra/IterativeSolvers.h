@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <cmath>
 #include <exception>
-#include <experimental/optional>
+#include <optional>
 #include <iostream>
 #include <limits>
 
@@ -52,9 +52,9 @@ template <typename Vector, typename Multiplier, typename Scalar = double,
 using STPCGUserFunction =
     std::function<bool(size_t k, const Vector &g,
                        const SymmetricLinearOperator<Vector, Args...> &H,
-                       const std::experimental::optional<LinearOperator<
+                       const std::optional<LinearOperator<
                            Vector, std::pair<Vector, Multiplier>, Args...>> &P,
-                       const std::experimental::optional<
+                       const std::optional<
                            LinearOperator<Multiplier, Vector, Args...>> &At,
                        const Vector &sk, const Vector &rk, const Vector &vk,
                        const Vector &pk, Scalar alpha_k, Args &... args)>;
@@ -171,15 +171,15 @@ Vector STPCG(const Vector &g, const SymmetricLinearOperator<Vector, Args...> &H,
              Args &... args, Scalar &update_step_M_norm, size_t &num_iterations,
              Scalar Delta, size_t max_iterations = 1000, Scalar kappa_fgr = .1,
              Scalar theta = .5,
-             const std::experimental::optional<
+             const std::optional<
                  STPCGPreconditioner<Vector, Multiplier, Args...>> &P =
-                 std::experimental::nullopt,
-             const std::experimental::optional<
+                 {},
+             const std::optional<
                  LinearOperator<Multiplier, Vector, Args...>> &At =
-                 std::experimental::nullopt,
-             const std::experimental::optional<
+                 {},
+             const std::optional<
                  STPCGUserFunction<Vector, Multiplier, Scalar, Args...>>
-                 &user_function = std::experimental::nullopt,
+                 &user_function = {},
              Scalar epsilon = 1e-8) {
 
   /// Argument checking
@@ -564,9 +564,9 @@ LSQR(const LinearOperator<VectorX, VectorY, Args...> &A,
      size_t max_iterations = 1000, Scalar lambda = 0, Scalar btol = 1e-6,
      Scalar Atol = 1e-6, Scalar Abar_cond_limit = 1e8,
      Scalar Delta = sqrt(std::numeric_limits<Scalar>::max()),
-     const std::experimental::optional<
+     const std::optional<
          LSQRUserFunction<VectorX, VectorY, Scalar, Args...>> &user_function =
-         std::experimental::nullopt) {
+         {}) {
 
   /// Argument checking
 
@@ -870,9 +870,9 @@ LSQR(const LinearOperator<Vector, Vector, Args...> &A,
      Scalar lambda = 0, Scalar btol = 1e-6, Scalar Atol = 1e-6,
      Scalar Abar_cond_limit = 1e8,
      Scalar Delta = sqrt(std::numeric_limits<Scalar>::max()),
-     const std::experimental::optional<
+     const std::optional<
          LSQRUserFunction<Vector, Vector, Scalar, Args...>> &user_function =
-         std::experimental::nullopt) {
+         {}) {
 
   return LSQR<Vector, Vector, Scalar, Args...>(
       A, At, b, inner_product, inner_product, args..., xnorm, num_iterations,

@@ -23,8 +23,9 @@
 #include "Optimization/Util/Stopwatch.h" // Useful timing functions
 
 #include <algorithm>
+#define _USE_MATH_DEFINES
 #include <cmath>
-#include <experimental/optional>
+#include <optional>
 #include <functional>
 #include <iostream>
 #include <limits>
@@ -274,9 +275,9 @@ ADMM(const AugLagMinX<VariableX, VariableY, VariableR, Scalar, Args...> &minLx,
      const InnerProduct<VariableR, Scalar, Args...> inner_product_r,
      const VariableR &c, const VariableX &x0, const VariableY &y0, Args... args,
      const ADMMParams<Scalar> &params = ADMMParams<Scalar>(),
-     const std::experimental::optional<
+     const std::optional<
          ADMMUserFunction<VariableX, VariableY, VariableR, Scalar, Args...>>
-         &user_function = std::experimental::nullopt) {
+         &user_function = {}) {
 
   /// Declare some useful variables
 
@@ -636,9 +637,9 @@ ADMM(const AugLagMinX<Variable, Variable, Variable, Scalar, Args...> &minLx,
      const InnerProduct<Variable, Scalar, Args...> inner_product,
      const Variable &c, const Variable &x0, const Variable &y0, Args... args,
      const ADMMParams<Scalar> &params = ADMMParams<Scalar>(),
-     const std::experimental::optional<
+     const std::optional<
          ADMMUserFunction<Variable, Variable, Variable, Scalar, Args...>>
-         &user_function = std::experimental::nullopt) {
+         &user_function = {}) {
   return ADMM<Variable, Variable, Variable, Scalar, Args...>(
       minLx, minLy, A, B, At, inner_product, inner_product, c, x0, y0, args...,
       params, user_function);

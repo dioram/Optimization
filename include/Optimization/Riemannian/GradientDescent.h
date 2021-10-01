@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <experimental/optional>
+#include <optional>
 #include <iostream>
 #include <limits>
 #include <math.h>
@@ -132,9 +132,9 @@ GradientDescentResult<Variable, Scalar> GradientDescent(
     Args &... args,
     const GradientDescentParams<Scalar> &params =
         GradientDescentParams<Scalar>(),
-    const std::experimental::optional<
+    const std::optional<
         GradientDescentUserFunction<Variable, Tangent, Scalar, Args...>>
-        &user_function = std::experimental::nullopt) {
+        &user_function = {}) {
 
   /// Argument checking
 
@@ -426,13 +426,15 @@ GradientDescentResult<Vector, Scalar> EuclideanGradientDescent(
     Args &... args,
     const GradientDescentParams<Scalar> &params =
         GradientDescentParams<Scalar>(),
-    const std::experimental::optional<EuclideanGradientDescentUserFunction<
-        Vector, Scalar, Args...>> &user_function = std::experimental::nullopt) {
+    const std::optional<EuclideanGradientDescentUserFunction<
+        Vector, Scalar, Args...>> &user_function = {}) {
 
   /// Run gradient descent using these Euclidean operators
   return GradientDescent<Vector, Vector, Scalar, Args...>(
-      f, grad_f, EuclideanMetric<Vector, Scalar, Args...>,
-      EuclideanRetraction<Vector, Args...>, x0, args..., params, user_function);
+      f, grad_f, 
+      { EuclideanMetric<Vector, Scalar, Args...> },
+      { EuclideanRetraction<Vector, Args...> },
+      x0, args..., params, user_function);
 }
 } // namespace Riemannian
 } // namespace Optimization
