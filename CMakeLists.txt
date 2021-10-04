@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+include(GNUInstallDirs)
+
 if (MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa")
 endif()
@@ -36,7 +38,10 @@ add_library(${PROJECT_NAME} INTERFACE)
 # Set the include directory for this project.  We use include/ as the top-level include directory so that #include directives in client source files are of the form "${PROJECT_NAME}/blah/blah.h"
 set(OPTIMIZATION_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 message(STATUS "Found ${PROJECT_NAME} include directory: ${OPTIMIZATION_INCLUDE_DIR}")
-target_include_directories(${PROJECT_NAME} INTERFACE ${OPTIMIZATION_INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME} INTERFACE 
+  $<BUILD_INTERFACE:${OPTIMIZATION_INCLUDE_DIR}>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 
 # Top-level directory of the Optimization library
 set(OPTIMIZATION_TOPLEVEL_DIR ${OPTIMIZATION_INCLUDE_DIR}/Optimization)
@@ -58,15 +63,7 @@ set(OPTIMIZATION_HDRS
 message(STATUS "Found ${PROJECT_NAME} header files:\n ${OPTIMIZATION_HDRS}")
 
 # List the complete set of header files as source files.
-target_sources(${PROJECT_NAME} INTERFACE ${OPTIMIZATION_HDRS})
-
-# Export Optimization library
-
-# Add add entry for this project into CMake's package registry, so that this project can be found by other CMake projects
-export(PACKAGE ${PROJECT_NAME})
-# Create a configuration file for this project, so that it can be imported by other CMake projects
-export(TARGETS ${PROJECT_NAME} FILE ${PROJECT_NAME}Config.cmake)
-
+target_sources(${PROJECT_NAME} INTERFACE $<BUILD_INTERFACE:${OPTIMIZATION_HDRS}>)
 
 # SET UP [OPTIONAL] CODE EXAMPLES AND TESTS
 
@@ -91,3 +88,34 @@ if(${BUILD_OPTIMIZATION_TESTS})
 message(STATUS "Adding unit tests to build")
 add_subdirectory(tests)
 endif()
+
+###############################################################################################
+# install
+###############################################################################################
+
+include(CMakePackageConfigHelpers)
+    configure_package_config_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/CMake/${PROJECT_NAME}Config.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+    INSTALL_DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
+)
+
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME})
+
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(TARGETS ${PROJECT_NAME}
+    EXPORT ${PROJECT_NAME}-export
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+install(EXPORT ${PROJECT_NAME}-export
+  FILE
+    ${PROJECT_NAME}Targets.cmake
+  NAMESPACE
+  ${PROJECT_NAME}::
+  DESTINATION
+    ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
+)
